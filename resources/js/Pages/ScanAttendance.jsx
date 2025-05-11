@@ -45,7 +45,7 @@ const ScanAttendance = () => {
         </button>
 
         {/* Manual token input */}
-        <input
+        {/* <input
           type="text"
           placeholder="Enter token manually"
           value={token}
@@ -62,7 +62,7 @@ const ScanAttendance = () => {
 
         <p className="text-sm text-center mt-4 text-gray-600">
           You can scan a QR code or enter a token manually.
-        </p>
+        </p> */}
       </div>
 
       {/* ✅ Modal with QR Scanner */}
