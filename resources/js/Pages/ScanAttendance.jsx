@@ -5,18 +5,24 @@ import Html5QrScanner from "../Components/Html5QrScanner";
 import Layout from "../Layouts/Layout";
 
 const ScanAttendance = () => {
-  const [token, setToken] = useState(""); // ✅ manual debug token
+  const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
 
   const markAttendance = async (token) => {
-    alert("Submitting token: " + token); // ✅ debug alert
     setLoading(true);
+    const data = { token };
+
     try {
-      const res = await axios.post("/api/attendance/scan", { token });
-      alert(res.data.message); // ✅ debug success
+      const res = await axios.post("/api/attendance/scan", null, {
+        params: data,
+        headers: { "Content-Type": "application/json" },
+      });
+
       Swal.fire("Success", res.data.message || "Attendance marked.", "success");
+      setShowScanner(false); // ✅ close modal on success
+      setToken(""); // Optional: reset manual input
     } catch (err) {
-      alert(err.response?.data?.error || err.message); // ✅ debug error
       Swal.fire("Error", err.response?.data?.error || "Failed to mark attendance", "error");
     } finally {
       setLoading(false);
@@ -30,33 +36,52 @@ const ScanAttendance = () => {
           Scan QR to Mark Attendance
         </h1>
 
-        {/* QR Scanner */}
-        <div className="border rounded overflow-hidden">
-          <Html5QrScanner onScanSuccess={(text) => markAttendance(text)} />
-        </div>
+        {/* Open Scanner Modal Button */}
+        <button
+          onClick={() => setShowScanner(true)}
+          className="bg-green-600 text-white px-4 py-2 rounded w-full mb-4"
+        >
+          Open QR Scanner
+        </button>
 
-        {/* ✅ Manual token input for debugging */}
-        <div className="mt-6">
-          <input
-            type="text"
-            placeholder="Enter token manually"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            className="border p-2 rounded w-full mb-2"
-          />
-          <button
-            onClick={() => markAttendance(token)}
-            disabled={loading || !token}
-            className="bg-primary text-white px-4 py-2 rounded w-full disabled:opacity-50"
-          >
-            {loading ? "Submitting..." : "Submit Token Manually"}
-          </button>
-        </div>
+        {/* Manual token input */}
+        <input
+          type="text"
+          placeholder="Enter token manually"
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
+          className="border p-2 rounded w-full mb-2"
+        />
+        <button
+          onClick={() => markAttendance(token)}
+          disabled={loading || !token}
+          className="bg-primary text-white px-4 py-2 rounded w-full disabled:opacity-50"
+        >
+          {loading ? "Submitting..." : "Submit Token Manually"}
+        </button>
 
         <p className="text-sm text-center mt-4 text-gray-600">
-          Point your camera at the QR code or use the manual input above.
+          You can scan a QR code or enter a token manually.
         </p>
       </div>
+
+      {/* ✅ Modal with QR Scanner */}
+      {showScanner && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-4 w-full max-w-md relative shadow-lg">
+            <h2 className="text-lg font-semibold text-center mb-4">QR Scanner</h2>
+            <Html5QrScanner
+              onScanSuccess={(text) => markAttendance(text)}
+            />
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-red-600"
+              onClick={() => setShowScanner(false)}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
