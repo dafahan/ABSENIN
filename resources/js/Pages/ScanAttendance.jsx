@@ -8,12 +8,17 @@ const ScanAttendance = () => {
 
 
   const markAttendance = async (token) => {
+    alert(token);
     setLoading(true);
     try {
       const res = await axios.post("/api/attendance/scan", { token });
+    alert(res.data.message);
+      
       Swal.fire("Success", res.data.message || "Attendance marked.", "success");
     } catch (err) {
       Swal.fire("Error", err.response?.data?.error || "Failed to mark attendance", "error");
+    alert(err.response?.data?.error);
+
     } finally {
       setLoading(false);
       setScannedToken("");
