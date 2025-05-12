@@ -92,7 +92,7 @@ function Layout({ children }) {
               </button>
               <Link href="/" className="flex items-center space-x-2">
                 <img src="/assets/images/logo.png" alt="Logo" className="h-12 w-auto py-2" />
-                <h1 className='font-semibold'>SMK N 3 Muhammadiyah Bandar Lampung</h1>
+                <h1 className='font-semibold'>SMA 2 Muhammadiyah Bandar Lampung</h1>
               </Link>
             </div>
             <div className="flex items-center">

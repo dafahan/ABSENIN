@@ -9,7 +9,7 @@ const Dashboard = ({ totalStudents, totalTeachers, attendancePercentage, recentA
       {/* Welcome */}
       
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary mb-1">Welcome to Absenin Dashboard</h1>
+        <h1 className="text-3xl font-bold text-primary mb-1">Welcome to Absen Muha Dashboard</h1>
         <p className="text-gray-600">Overview of today's attendance and school stats.</p>
       </div>
 

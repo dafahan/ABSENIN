@@ -54,7 +54,7 @@ export default function Login() {
                 <img
                     src="/assets/images/logo.png"
                     alt="Logo"
-                    className="h-12"
+                    className="h-16"
                 />
             </header>
 
@@ -132,11 +132,15 @@ export default function Login() {
 
             {/* Footer */}
             <footer className="bg-cyan-600 text-white px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center justify-center gap-2">
                 <img
                     src="/assets/images/logo.png"
                     alt="MedS-PATH Footer Logo"
                     className="h-8"
                 />
+                <h1>SMA 2 Muhammadiyah Bandar Lampung</h1>
+                </div>
+
                 <div className="flex gap-2  items-center justify-around">
                 <FaRegCopyright color='white' size={18}/>
                 <span className="text-sm italic ">Copyright 2025</span>
