@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\SchoolClassController; 
 use App\Http\Controllers\AttendanceController; 
+use App\Http\Controllers\ForgotPasswordController; 
 use App\Http\Controllers\SubjectController; 
 use App\Http\Controllers\HomeController; 
 use App\Http\Middleware\RoleMiddleware;
@@ -17,12 +18,17 @@ Route::post('/login', [LoginController::class, 'login_process']);
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::get('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 Route::get('/', [HomeController::class, 'index']); 
-
+Route::get('/forgot-password', [LoginController::class, 'forgotPassword']);
+Route::get('/api/security-question/{username}', [ForgotPasswordController::class, 'getQuestion']);
+Route::post('/api/verify-security-answer', [ForgotPasswordController::class, 'verifyAnswer']);
+Route::post('/api/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 
 
 Route::middleware(['auth'])->group(function () {
 
     Route::resource('classes', SchoolClassController::class);
+    Route::get('/securityQuestion', [LoginController::class,'securityQuestion']);
+    Route::post('/securityQuestion', [LoginController::class, 'storeSecurityAnswer']);
     Route::resource('subject', SubjectController::class);
     Route::get('dashboard', [HomeController::class,'dashboard']);
     Route::get('scan', [AttendanceController::class,'scan']);   

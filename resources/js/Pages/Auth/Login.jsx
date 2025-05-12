@@ -107,6 +107,7 @@ export default function Login() {
                         <label htmlFor="remember" className="text-sm text-gray-700">
                             Ingat saya
                         </label>
+
                     </div>
 
                     {errors && (
@@ -121,6 +122,11 @@ export default function Login() {
                     >
                         Masuk
                     </button>
+                    <div className="text-right text-sm text-cyan-600 mt-2">
+                            <a href="/forgot-password" className="hover:underline">
+                                Lupa password?
+                            </a>
+                    </div>
                 </form>
             </main>
 

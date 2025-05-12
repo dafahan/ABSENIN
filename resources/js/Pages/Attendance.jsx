@@ -76,6 +76,30 @@ const Attendance = () => {
   }, [date,selectedSubject]);
   
 
+  const handleExportCSV = () => {
+    const headers = ["No", "Student", "Subject", "Status", "Reason", "Date"];
+    const rows = attendances.map((a, index) => [
+      index + 1,
+      a.student_name,
+      selectedSubjectName || "Daily Attendance",
+      a.status || "Absent",
+      a.reason || "",
+      date,
+    ]);
+  
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows].map((e) => e.map(field => `"${field}"`).join(",")).join("\n");
+  
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `attendance_${date}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const fetchSubjects = async () => {
     const res = await axios.get("/api/subject");
     setSubjects(res.data);
@@ -175,6 +199,12 @@ const Attendance = () => {
 
         </div>
         <div className="flex gap-2">
+          <button
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            onClick={handleExportCSV}
+          >
+            Export
+          </button>
             <button
               className="bg-primary text-white px-4 py-2 rounded hover:bg-hover"
               onClick={() => setIsQrModalOpen(true)}

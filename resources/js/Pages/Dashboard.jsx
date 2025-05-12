@@ -6,6 +6,7 @@ const Dashboard = ({ totalStudents, totalTeachers, attendancePercentage, recentA
   return (
     <div className="pt-10 px-6 md:px-20 bg-gray-100 min-h-screen">
       {/* Welcome */}
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-primary mb-1">Welcome to Absenin Dashboard</h1>
         <p className="text-gray-600">Overview of today's attendance and school stats.</p>
@@ -37,7 +38,9 @@ const Dashboard = ({ totalStudents, totalTeachers, attendancePercentage, recentA
           </div>
         </div>
       </div>
-
+      <div className="flex h-64  w-full items-center justify-center relative">
+          <img src="/assets/images/logo.png" alt="logo" className="h-full opacity-20 absolute" />
+      </div>
   
 
     </div>

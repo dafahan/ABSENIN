@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use App\Models\Data;
+
 
 class LoginController extends Controller
 {    
@@ -23,10 +25,60 @@ class LoginController extends Controller
         if (auth()->user()) {
             return redirect('/dashboard');
         }
+
+
         //dd(Hash::make('123'));
         return inertia('Auth/Login', [
             'csrf_token' => csrf_token(), // Pass the CSRF token to the Inertia view
         ]);
+    }
+
+    public function forgotPassword(){
+        request()->session()->regenerate();
+        return inertia('Auth/ForgotPassword', [
+            'csrf_token' => csrf_token(),
+        ]);
+    }
+
+    public function securityQuestion()
+    {
+        // Check if already answered
+        $existingAnswer = Data::where('key', 'security_answer')
+            ->where('user_id', Auth::id())
+            ->first();
+    
+        if ($existingAnswer) {
+            return redirect('/dashboard');
+        }
+    
+        // Fetch questions (with user_id = null)
+        $questions = Data::where('key', 'security_question')
+            ->whereNull('user_id')
+            ->pluck('value');
+    
+        return inertia('Auth/SecurityQuestion', [
+            'questions' => $questions,
+        ]);
+    }
+
+
+    public function storeSecurityAnswer(Request $request)
+    {
+        $request->validate([
+            'question' => 'required|string',
+            'answer' => 'required|string',
+        ]);
+
+        Data::create([
+            'key' => 'security_answer',
+            'value' => json_encode([
+                'question' => $request->question,
+                'answer' => $request->answer,
+            ]),
+            'user_id' => Auth::id(),
+        ]);
+
+        return redirect('/dashboard');
     }
     
     /**
@@ -59,6 +111,13 @@ class LoginController extends Controller
                         'username' => 'forbidden',
                     ]
                 ], 422);
+            }
+            $hasAnswer = Data::where('key', 'security_answer')
+                ->where('user_id', auth()->id())
+                ->exists();
+
+            if (!$hasAnswer) {
+                return redirect('/securityQuestion');
             }
     
             return redirect('/dashboard');
