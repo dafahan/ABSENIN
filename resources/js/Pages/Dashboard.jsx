@@ -2,7 +2,8 @@ import React from "react";
 import Layout from "../Layouts/Layout";
 import { FaUserGraduate, FaChalkboardTeacher, FaCalendarCheck } from "react-icons/fa";
 
-const Dashboard = ({ totalStudents, totalTeachers, attendancePercentage, recentAttendance }) => {
+const Dashboard = ({ totalStudents, totalTeachers, attendancePercentage, recentAttendance, subjectsToday }) => {
+
   return (
     <div className="pt-10 px-6 md:px-20 bg-gray-100 min-h-screen">
       {/* Welcome */}
@@ -40,6 +41,34 @@ const Dashboard = ({ totalStudents, totalTeachers, attendancePercentage, recentA
       </div>
       <div className="flex h-64  w-full items-center justify-center relative">
           <img src="/assets/images/logo.png" alt="logo" className="h-full opacity-20 absolute" />
+          <div className="w-full mt-4">
+            <h2 className="text-xl font-semibold mb-2">Today’s Subjects</h2>
+            {subjectsToday.length > 0 ? (
+              <table className="min-w-full bg-white rounded shadow overflow-hidden">
+                <thead className="bg-primary text-white">
+                  <tr>
+                    <th className="text-left py-2 px-4">Subject</th>
+                    <th className="text-left py-2 px-4">Teacher</th>
+                    <th className="text-left py-2 px-4">Class</th>
+                    <th className="text-left py-2 px-4">Schedule</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {subjectsToday.map((subject, index) => (
+                    <tr key={index} className="border-b hover:bg-gray-50">
+                      <td className="py-2 px-4">{subject.name}</td>
+                      <td className="py-2 px-4">{subject.teacher?.name ?? '—'}</td>
+                      <td className="py-2 px-4">{subject.class?.name ?? '—'}</td>
+                      <td className="py-2 px-4">{subject.schedule}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-gray-600">No subjects scheduled for today.</p>
+            )}
+          </div>
+
       </div>
   
 

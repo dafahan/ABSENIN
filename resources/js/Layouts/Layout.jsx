@@ -92,11 +92,12 @@ function Layout({ children }) {
               </button>
               <Link href="/" className="flex items-center space-x-2">
                 <img src="/assets/images/logo.png" alt="Logo" className="h-12 w-auto py-2" />
+                <h1 className='font-semibold'>SMK N 3 Muhammadiyah Bandar Lampung</h1>
               </Link>
             </div>
             <div className="flex items-center">
               <Dropdown
-                label={<img className="w-8 h-8 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="User" />}
+                label={<img className="w-8 h-8 rounded-full" src="/assets/images/profile.png" alt="User" />}
                 arrowIcon={false}
                 className="bg-primary text-white"
                 inline

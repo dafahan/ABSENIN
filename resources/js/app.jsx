@@ -8,7 +8,7 @@ import '@/css/app.css';
 
 createInertiaApp({
   resolve: async (name) => {
-    console.log('developed by dafahan.dev')
+
     const pages = import.meta.glob('./Pages/**/*.jsx', { eager: true });
     const page = pages[`./Pages/${name}.jsx`];
     

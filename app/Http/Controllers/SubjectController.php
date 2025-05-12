@@ -34,8 +34,9 @@ class SubjectController extends Controller
 
         $subject = Subject::create([
             'name' => $request->name,
-            'teacher_id' => $request->teacher_id,
             'class_id' => $request->class_id,
+            'teacher_id' => $request->teacher_id,
+            'schedule' => $request->schedule,
         ]);
 
         return response()->json($subject, 201);
@@ -59,9 +60,11 @@ class SubjectController extends Controller
 
         $subject->update([
             'name' => $request->name,
-            'teacher_id' => $request->teacher_id,
             'class_id' => $request->class_id,
+            'teacher_id' => $request->teacher_id,
+            'schedule' => $request->schedule,
         ]);
+        
 
         return response()->json($subject);
     }

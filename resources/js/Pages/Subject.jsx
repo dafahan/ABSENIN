@@ -17,8 +17,13 @@ const Subject = () => {
   const [teachers, setTeachers] = useState(teacher);
 
   const [search, setSearch] = useState("");
+  
 
   const [name, setName] = useState("");
+  const [schedule, setSchedule] = useState("");
+  const [scheduleDay, setScheduleDay] = useState("");
+  const [scheduleTime, setScheduleTime] = useState("");
+
   const [classId, setClassId] = useState("");
   const [teacherId, setTeacherId] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -45,6 +50,7 @@ const Subject = () => {
 
   const openModal = (subject = null) => {
     if (subject) {
+      setSchedule(subject.schedule || "");
       setEditingId(subject.id);
       setName(subject.name);
       setClassId(subject.class_id);
@@ -64,12 +70,14 @@ const Subject = () => {
     setName("");
     setClassId("");
     setTeacherId("");
+    setSchedule("");
     setEditingId(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !classId || !teacherId) return;
+    const fullSchedule = `${scheduleDay}, ${scheduleTime}`;
 
     try {
       if (editingId) {
@@ -77,6 +85,7 @@ const Subject = () => {
           name,
           class_id: classId,
           teacher_id: teacherId,
+          schedule:fullSchedule,
         });
         Swal.fire("Updated!", "Subject updated successfully.", "success");
       } else {
@@ -84,6 +93,7 @@ const Subject = () => {
           name,
           class_id: classId,
           teacher_id: teacherId,
+          schedule:fullSchedule
         });
         Swal.fire("Added!", "Subject added successfully.", "success");
       }
@@ -131,6 +141,10 @@ const Subject = () => {
         Header: "Class",
         accessor: (row) => row.class?.name || "-",
         id: "class_name",
+      },
+      {
+        Header: "Schedule",
+        accessor: "schedule",
       },
       {
         Header: "Teacher",
@@ -297,6 +311,32 @@ const Subject = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
+              <div className="flex gap-2">
+                {/* Day selector */}
+                <select
+                  value={scheduleDay}
+                  onChange={(e) => setScheduleDay(e.target.value)}
+                  className="border p-2 rounded w-1/2"
+                >
+                  <option value="">Select day</option>
+                  <option value="Monday">Monday</option>
+                  <option value="Tuesday">Tuesday</option>
+                  <option value="Wednesday">Wednesday</option>
+                  <option value="Thursday">Thursday</option>
+                  <option value="Friday">Friday</option>
+                  <option value="Saturday">Saturday</option>
+                  <option value="Sunday">Sunday</option>
+                </select>
+
+                {/* Time selector */}
+                <input
+                  type="time"
+                  value={scheduleTime}
+                  onChange={(e) => setScheduleTime(e.target.value)}
+                  className="border p-2 rounded w-1/2"
+                />
+              </div>
+
 
               <select
                 value={classId}
