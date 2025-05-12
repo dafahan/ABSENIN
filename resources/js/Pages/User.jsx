@@ -3,6 +3,7 @@ import Layout from "../Layouts/Layout";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
+
 import {
   useTable,
   useSortBy,
@@ -19,6 +20,10 @@ const Users = () => {
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState(null);
   const modalRef = useRef(null);
+  const importModalRef = useRef(null);
+  const [importFile, setImportFile] = useState(null);
+  const [selectedClass, setSelectedClass] = useState("");
+
 
   const {
     register,
@@ -130,6 +135,10 @@ const Users = () => {
       accessor: "name",
     },
     {
+      Header: "Username",
+      accessor: "username",
+    },
+    {
       Header: "Role",
       accessor: "role",
     },
@@ -194,17 +203,58 @@ const Users = () => {
   }, [search, setGlobalFilter]);
   
 
+
+  const handleImportSubmit = async (e) => {
+    e.preventDefault();
+  
+    if (!importFile) {
+      return Swal.fire("Error", "No file selected", "error");
+    }
+  
+    if (!selectedClass) {
+      return Swal.fire("Error", "Please select a class", "error");
+    }
+  
+    const formData = new FormData();
+    formData.append("file", importFile);
+    formData.append("class_id", selectedClass);
+  
+    try {
+      await axios.post("/users/import", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      Swal.fire("Success", "Users imported successfully!", "success");
+      importModalRef.current?.close();
+      setImportFile(null);
+      setSelectedClass("");
+      fetchUsers();
+    } catch (error) {
+      Swal.fire("Error", "Failed to import users.", "error");
+    }
+  };
+  
   return (
     <div className="pt-10 px-6 md:px-20 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-4 text-primary">User Management</h1>
 
       <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <button
-          onClick={() => modalRef.current?.showModal()}
-          className="bg-primary text-white px-4 py-2 rounded hover:bg-hover"
-        >
-          Add User
-        </button>
+      <div className="space-x-2">
+          <button
+            onClick={() => modalRef.current?.showModal()}
+            className="bg-primary text-white px-4 py-2 rounded hover:bg-hover"
+          >
+            Add User
+          </button>
+          <button
+            onClick={() => importModalRef.current?.showModal()}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            Import Users
+          </button>
+        </div>
         <dialog ref={modalRef} className="rounded-lg w-full max-w-xl p-6 bg-white">
         <h2 className="text-xl font-bold mb-4">
           {editingId ? "Edit User" : "Add User"}
@@ -277,6 +327,52 @@ const Users = () => {
           </div>
         </form>
       </dialog>
+
+      <dialog ref={importModalRef} className="rounded-lg w-full max-w-md p-6 bg-white">
+        <h2 className="text-xl font-bold mb-4">Import Users from CSV/Excel</h2>
+        <form onSubmit={handleImportSubmit} className="space-y-4">
+        <a href="/sample/example-users.csv" className="pt-2 text-blue-500 hover:italic">Download sample file</a>
+
+          <select
+            value={selectedClass}
+            onChange={(e) => setSelectedClass(e.target.value)}
+            className="border p-2 rounded w-full"
+            required
+          >
+            <option value="">Select Class</option>
+            {classes.map((cls) => (
+              <option key={cls.id} value={cls.id}>
+                {cls.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="file"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            onChange={(e) => setImportFile(e.target.files[0])}
+            className="border p-2 rounded w-full"
+            required
+          />
+          <br/>
+          <div className="flex justify-end gap-4 mt-4">
+            <button
+              type="button"
+              onClick={() => importModalRef.current?.close()}
+              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="bg-primary text-white px-4 py-2 rounded hover:bg-hover"
+            >
+              Import
+            </button>
+          </div>
+        </form>
+      </dialog>
+
+
 
         <input
           type="text"
@@ -388,6 +484,7 @@ const Users = () => {
       </div>
 
       {/* The modal remains unchanged */}
+          
     </div>
   );
 };

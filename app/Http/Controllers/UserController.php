@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\SchoolClass;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\UsersImport;
 
 class UserController extends Controller
 {
@@ -104,4 +106,16 @@ class UserController extends Controller
 
         return response()->json(['message' => 'User deleted successfully']);
     }
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,xlsx,xls',
+            'class_id' => 'required|exists:classes,id',
+        ]);
+    
+        Excel::import(new UsersImport($request->class_id), $request->file('file'));
+    
+        return response()->json(['message' => 'Import successful']);
+    }
+
 }

@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', RoleMiddleware::class.':admin,superadmin'])->group(function () {
     Route::resource('users', UserController::class);
+    Route::post('/users/import', [UserController::class, 'import']);
     Route::resource('attendance', AttendanceController::class);
 
     Route::prefix('api')->group(function () {
