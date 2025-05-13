@@ -25,31 +25,41 @@ class AttendanceController extends Controller
 
     public function api(Request $request)
     {
-        $subject = $request->subject;
+        $subjectId = $request->subject;
         $date = $request->date ?? now()->toDateString();
     
-        // Get all students (users with role = 'user')
-        $students = User::where('role', 'user')->get();
-        $data = $students->map(function ($student) use ($subject, $date) {
-            if ($subject) {
-                // Subject Attendance
+        // If subject is selected, fetch the subject and its class_id
+        if ($subjectId) {
+            $subject = Subject::with('class')->findOrFail($subjectId);
+    
+            // Only get students from the same class as the subject
+            $students = User::where('role', 'user')
+                ->where('class_id', $subject->class_id)
+                ->get();
+        } else {
+            // If no subject selected, get all students
+            $students = User::where('role', 'user')->get();
+        }
+    
+        $data = $students->map(function ($student) use ($subjectId, $date) {
+            if ($subjectId) {
+                // Subject-specific attendance
                 $attendance = SubjectAttendance::where('student_id', $student->id)
-                    ->where('subject_id', $subject)
+                    ->where('subject_id', $subjectId)
                     ->where('date', $date)
                     ->first();
     
                 return [
                     'id' => $attendance?->id,
                     'student_name' => $student->name,
-                    'student_id'=>$student->id,
+                    'student_id' => $student->id,
                     'subject' => $attendance?->subject?->name,
-                    'subject_id' => $subject,
+                    'subject_id' => $subjectId,
                     'status' => $attendance->status ?? null,
-                    'reason'=>$attendance->reason??null
+                    'reason' => $attendance->reason ?? null
                 ];
-
             } else {
-                // Daily Attendance
+                // Daily attendance
                 $attendance = Attendance::where('student_id', $student->id)
                     ->where('date', $date)
                     ->first();
@@ -57,18 +67,18 @@ class AttendanceController extends Controller
                 return [
                     'id' => $attendance?->id,
                     'student_name' => $student->name,
-                    'student_id'=>$student->id,
+                    'student_id' => $student->id,
                     'subject' => null,
                     'subject_id' => null,
                     'status' => $attendance->status ?? null,
-                    'reason'=>$attendance->reason??null
-
+                    'reason' => $attendance->reason ?? null
                 ];
             }
         });
     
         return response()->json($data);
     }
+    
 
 
     public function update(Request $request)
